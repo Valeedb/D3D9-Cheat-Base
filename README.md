@@ -41,6 +41,7 @@ This project works by creating a **fake D3D9 device** and hooking directly into 
 ## Screenshots 📸
 
 [(Console of a succsessful injection.)](https://imgur.com/cVhA6I0)
+[Text rendering showcase](https://imgur.com/5eTs0r7)
 
 ---
 
