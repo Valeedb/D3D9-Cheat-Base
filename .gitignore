@@ -1,0 +1,14 @@
+# Ignore build folders
+Debug/
+x64/
+DX9-Cheat-Base/
+
+# Ignore Visual Studio config files
+.vs/
+.vscode/
+
+# Ignore user-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
