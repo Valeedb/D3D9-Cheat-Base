@@ -1,6 +1,8 @@
 #include "D3D.hpp"
 #include "GlobalVars.hpp"
 
+ID3DXFont* g_pDefaultFont = nullptr;
+
 typedef HRESULT( __stdcall* EndScene_t )( IDirect3DDevice9* );
 EndScene_t oEndScene = nullptr;
 static HRESULT __stdcall Hooked_EndScene( IDirect3DDevice9* pDevice )
@@ -12,9 +14,15 @@ static HRESULT __stdcall Hooked_EndScene( IDirect3DDevice9* pDevice )
 		printf_s( "Captured D3DDevice at 0x%p\n", g_pD3Device );
 	}
 
-	// ...
-	// ...
-	// ...
+	if ( g_pDefaultFont == nullptr )
+	{
+		D3DXCreateFont( g_pD3Device, 14, 0, FW_NORMAL, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+						DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana", &g_pDefaultFont );
+		printf_s( "Created g_pDefaultFont at 0x%p\n", g_pDefaultFont );
+	}
+
+	D3D::DrawString( { 10.f, 10.f }, D3DCOLOR_RGBA( 255, 255, 0, 255 ), "DX9-Cheat-Base" );
+	D3D::DrawString( { 10.f, 24.f }, D3DCOLOR_RGBA( 0, 255, 255, 255 ), "By Valee1337", false );
 
 	return oEndScene( pDevice );
 }
@@ -23,11 +31,24 @@ typedef HRESULT( __stdcall* Reset_t )( IDirect3DDevice9*, D3DPRESENT_PARAMETERS*
 Reset_t oReset = nullptr;
 static HRESULT __stdcall Hooked_Reset( IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentParams )
 {
-	// ...
-	// ...
-	// ...
+	if ( g_pDefaultFont )
+	{
+		g_pDefaultFont->OnLostDevice( );
+	}
 
-	return oReset( pDevice, pPresentParams );
+	HRESULT result = oReset( pDevice, pPresentParams );
+
+	if ( g_pDefaultFont )
+	{
+		g_pDefaultFont->OnResetDevice( );
+	}
+	else
+	{
+		D3DXCreateFont( g_pD3Device, 14, 0, FW_NORMAL, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+						DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana", &g_pDefaultFont );
+	}
+
+	return result;
 }
 
 bool D3D::AtttachHooks( HWND hWnd )
@@ -89,4 +110,39 @@ bool D3D::AtttachHooks( HWND hWnd )
 	pD3D->Release( );
 
 	return true;
+}
+
+void D3D::DrawString( Vec2 vecPos, D3DCOLOR colColor, const char* szText, bool bOutlined, bool bCenetered, 
+					  ID3DXFont* pFont )
+{
+	RECT rect = { 
+		( LONG )vecPos.x, 
+		( LONG )vecPos.y, 
+		( LONG )( vecPos.x + 500 ),
+		( LONG )( vecPos.y + 50 ) 
+	};
+
+	if ( bOutlined )
+	{
+		D3DCOLOR outlineColor = D3DCOLOR_ARGB( 255, 0, 0, 0 );
+		RECT outlineRect = rect;
+
+		outlineRect.left--;
+		outlineRect.top--;
+		pFont->DrawTextA( nullptr, szText, -1, &outlineRect, DT_LEFT | DT_WORDBREAK, outlineColor );
+
+		outlineRect.left += 2;
+		outlineRect.top++;
+		pFont->DrawTextA( nullptr, szText, -1, &outlineRect, DT_LEFT | DT_WORDBREAK, outlineColor );
+
+		outlineRect.left--;
+		outlineRect.top++;
+		pFont->DrawTextA( nullptr, szText, -1, &outlineRect, DT_LEFT | DT_WORDBREAK, outlineColor );
+
+		outlineRect.left--;
+		outlineRect.top--;
+		pFont->DrawTextA( nullptr, szText, -1, &outlineRect, DT_LEFT | DT_WORDBREAK, outlineColor );
+	}
+
+	pFont->DrawTextA( nullptr, szText, -1, &rect, bCenetered ? DT_CENTER : DT_LEFT | DT_WORDBREAK, colColor );
 }
