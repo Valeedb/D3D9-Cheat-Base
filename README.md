@@ -28,7 +28,7 @@ This project works by creating a **fake D3D9 device** and hooking directly into 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/D3D9-Cheat-Base.git
+   git clone https://github.com/Valeedb/D3D9-Cheat-Base.git
    ```
 
 2. Build using Visual Studio 2022.
