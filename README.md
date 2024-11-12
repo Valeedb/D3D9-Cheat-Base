@@ -13,6 +13,7 @@ A simple and universal template for hooking D3D9 functions in games 🎮. Built 
 - 🖥️ **Supports both x64 and x86** architectures
 - 🧑‍💻 **Easy-to-understand code** — perfect for learning or modifying
 - 🌍 **Full-screen and windowed mode** support for flexibility
+- 🔧 **Simple helpers such as pattern scanning and vector structs** (CODE style signature scanner)
 
 ---
 
