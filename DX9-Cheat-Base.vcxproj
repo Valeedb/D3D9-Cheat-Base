@@ -158,6 +158,7 @@
     <ClInclude Include="Libs\MinHook\hde\table64.h" />
     <ClInclude Include="Libs\MinHook\minhook.h" />
     <ClInclude Include="Libs\MinHook\trampoline.h" />
+    <ClInclude Include="Utils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Libs\MinHook\hde\hde64.c" />
     <ClCompile Include="Libs\MinHook\hook.c" />
     <ClCompile Include="Libs\MinHook\trampoline.c" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

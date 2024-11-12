@@ -1,8 +1,10 @@
 #pragma once
 #include <Windows.h>
+#include <iostream>
 #include <thread>
 #include <string>
 #include <vector>
+#include <Psapi.h>
 
 // D3D9
 #include <d3d9.h>

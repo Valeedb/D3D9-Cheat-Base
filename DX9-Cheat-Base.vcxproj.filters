@@ -54,6 +54,9 @@
     <ClInclude Include="Libs\MinHook\hde\table64.h">
       <Filter>Resource Files\minhook\hde</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D.cpp">
@@ -79,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="Libs\MinHook\hde\hde32.c">
       <Filter>Resource Files\minhook\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
