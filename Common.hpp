@@ -6,6 +6,8 @@
 #include <vector>
 #include <Psapi.h>
 
+using namespace std::chrono_literals;
+
 // D3D9
 #include <d3d9.h>
 #include <d3dx9.h>

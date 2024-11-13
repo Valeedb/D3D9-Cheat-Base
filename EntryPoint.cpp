@@ -1,6 +1,7 @@
 #include "Common.hpp"
 #include "GlobalVars.hpp"
 #include "D3D.hpp"
+#include "SDK.hpp"
 
 DWORD WINAPI MainThread( PVOID pModule )
 {
@@ -21,6 +22,42 @@ DWORD WINAPI MainThread( PVOID pModule )
         return 0ul;
     }
 
+    SDK::FindOffsets( );
+    printf_s( "Scanned for offsets.\n" );
+
+    return 1ul;
+}
+
+DWORD WINAPI UnloadThread( PVOID pModule )
+{
+    while ( !GetAsyncKeyState( VK_END ) )
+        std::this_thread::sleep_for( 1s );
+
+    printf_s( "Goodbye!\n" );
+
+    std::this_thread::sleep_for( 1s );
+    g_bUnloading = true;
+
+    if ( g_pDefaultFont != nullptr )
+    {
+        g_pDefaultFont->Release( );
+        g_pDefaultFont = nullptr;
+    }
+
+    // This will take care of all hooks instead of doing it for each one
+    MH_DisableHook( MH_ALL_HOOKS );
+    MH_RemoveHook( MH_ALL_HOOKS );
+    MH_Uninitialize( );
+
+    FreeConsole( );
+    fclose( stdin );
+    fclose( stdout );
+    fclose( stderr );
+
+    Beep( 200, 200 );
+
+    FreeLibraryAndExitThread( ( HMODULE )pModule, 1ul );
+
     return 1ul;
 }
 
@@ -39,6 +76,12 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         if ( hMainThread != nullptr )
         {
             CloseHandle( hMainThread );
+        }
+
+        const HANDLE hUnloadThread = CreateThread( nullptr, NULL, UnloadThread, hModule, NULL, nullptr );
+        if ( hUnloadThread != nullptr )
+        {
+            CloseHandle( hUnloadThread );
         }
     }
 

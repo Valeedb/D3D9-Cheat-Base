@@ -78,6 +78,16 @@ struct Vec3
 	float x, y, z;
 };
 
+struct Color
+{
+	inline D3DCOLOR GetD3DColor( ) const
+	{
+		return D3DCOLOR_RGBA( r, g, b, a );
+	}
+
+	uint8_t r, g, b, a;
+};
+
 namespace Utils
 {
 	uint8_t* FindPattern( HMODULE hHandle, const char* szPattern, const char* szMask );

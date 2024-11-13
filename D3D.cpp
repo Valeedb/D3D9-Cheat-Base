@@ -1,5 +1,6 @@
 #include "D3D.hpp"
 #include "GlobalVars.hpp"
+#include "Hacks.hpp"
 
 ID3DXFont* g_pDefaultFont = nullptr;
 
@@ -7,6 +8,11 @@ typedef HRESULT( __stdcall* EndScene_t )( IDirect3DDevice9* );
 EndScene_t oEndScene = nullptr;
 static HRESULT __stdcall Hooked_EndScene( IDirect3DDevice9* pDevice )
 {
+	if ( g_bUnloading )
+	{
+		return oEndScene( pDevice );
+	}
+
 	// the magic? we steal it from the game now
 	if ( g_pD3Device == nullptr )
 	{
@@ -21,8 +27,7 @@ static HRESULT __stdcall Hooked_EndScene( IDirect3DDevice9* pDevice )
 		printf_s( "Created g_pDefaultFont at 0x%p\n", g_pDefaultFont );
 	}
 
-	D3D::DrawString( { 10.f, 10.f }, D3DCOLOR_RGBA( 255, 255, 0, 255 ), "DX9-Cheat-Base" );
-	D3D::DrawString( { 10.f, 24.f }, D3DCOLOR_RGBA( 0, 255, 255, 255 ), "By Valee1337", false );
+	Hacks::OnRender( );
 
 	return oEndScene( pDevice );
 }
@@ -31,6 +36,9 @@ typedef HRESULT( __stdcall* Reset_t )( IDirect3DDevice9*, D3DPRESENT_PARAMETERS*
 Reset_t oReset = nullptr;
 static HRESULT __stdcall Hooked_Reset( IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentParams )
 {
+	if ( g_bUnloading )
+		return oReset( pDevice, pPresentParams );
+
 	if ( g_pDefaultFont )
 	{
 		g_pDefaultFont->OnLostDevice( );
@@ -112,7 +120,7 @@ bool D3D::AtttachHooks( HWND hWnd )
 	return true;
 }
 
-void D3D::DrawString( Vec2 vecPos, D3DCOLOR colColor, const char* szText, bool bOutlined, bool bCenetered, 
+void D3D::DrawString( Vec2 vecPos, Color colColor, const char* szText, bool bOutlined, bool bCenetered, 
 					  ID3DXFont* pFont )
 {
 	RECT rect = { 
@@ -144,5 +152,6 @@ void D3D::DrawString( Vec2 vecPos, D3DCOLOR colColor, const char* szText, bool b
 		pFont->DrawTextA( nullptr, szText, -1, &outlineRect, DT_LEFT | DT_WORDBREAK, outlineColor );
 	}
 
-	pFont->DrawTextA( nullptr, szText, -1, &rect, bCenetered ? DT_CENTER : DT_LEFT | DT_WORDBREAK, colColor );
+	pFont->DrawTextA( nullptr, szText, -1, &rect, bCenetered ? DT_CENTER : DT_LEFT | DT_WORDBREAK,
+					  colColor.GetD3DColor( ) );
 }
